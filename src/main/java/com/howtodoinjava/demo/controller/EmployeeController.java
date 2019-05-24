@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.howtodoinjava.demo.dao.CustomerRepository;
+import com.howtodoinjava.demo.error.EmployeeNotFound;
 import com.howtodoinjava.demo.model.Customer;
 import com.howtodoinjava.demo.model.Employee;
 
 @RestController
 public class EmployeeController {
 
-	
+	 private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 	
 	@Autowired
 	private CustomerRepository custRepo;
@@ -30,8 +33,6 @@ public class EmployeeController {
 
 	
 	static{
-		
-		
 		employeesList.add(new Employee("1","John","Doe","johndoe@gmail.com"));
 		employeesList.add(new Employee("2","Rob","Smith","robsmith@gmail.com"));
 		employeesList.add(new Employee("3","Bill","Wi","billwi@gmail.com"));
@@ -58,10 +59,13 @@ public class EmployeeController {
 	@GetMapping("/employees/{id}")
     public Employee getEmployee(@PathVariable(value="id")String employeeId) 
     {
-		Employee employee1 = findByCodeIsIn(employeesList,employeeId);
-	
-		//Employee employee = employeesList.get(Integer.parseInt(employeeId));
-		return employee1;
+		Employee employee = findByCodeIsIn(employeesList,employeeId);
+	    if(employee==null){
+	    	 logger.debug("Employee not found:"+ employeeId);
+	    	throw new EmployeeNotFound(Long.parseLong(employeeId));
+	    }		
+		return employee;
+		
     }
 	
 	@PostMapping("/employees")
