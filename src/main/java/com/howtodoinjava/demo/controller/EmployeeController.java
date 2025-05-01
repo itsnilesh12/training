@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +23,8 @@ import com.howtodoinjava.demo.model.Employee;
 @RestController
 public class EmployeeController {
 
-	
-	
+
+	private static final Logger log = LoggerFactory.getLogger(EmployeeController.class);
 	@Autowired
 	private CustomerRepository custRepo;
 	
@@ -41,6 +43,7 @@ public class EmployeeController {
 	@GetMapping("/customer")
     public List<Customer> getCustomer() 
     {
+		log.info("`getCustomer` method called");
 		return custRepo.findAll();
 		//return employeesList;
     }
